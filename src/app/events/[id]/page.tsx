@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { useParams } from 'next/navigation'
 
 interface Event {
@@ -18,6 +18,7 @@ interface Event {
 }
 
 export default function EventDetail() {
+  const supabase = createClient()
   const { id } = useParams()
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
