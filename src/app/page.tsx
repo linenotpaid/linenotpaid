@@ -43,8 +43,7 @@ export default function Home() {
       {/* Header */}
       <div style={{background:'#0A0A0A',padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:32,height:32,background:'white',borderRadius:'50%'}}></div>
-          <span style={{color:'white',fontWeight:700,fontSize:16}}>linenotpaid</span>
+          <img src="/logo-dark.jpg" alt="linenotpaid" style={{height:36,width:'auto'}}/>
         </div>
         <a href="/auth" style={{background:'#2B7FFF',color:'white',padding:'8px 16px',borderRadius:8,textDecoration:'none',fontSize:13,fontWeight:600}}>دخول</a>
       </div>
