@@ -56,7 +56,6 @@ export default function WalletPage() {
               {name:'برو', desc:'للمؤثر الجاد', price:'79', period:'/شهر', features:['مكافآت x2','فعاليات VIP حصرية','تحويل فوري'], accent:'#8B5CF6'},
             ].map((pkg,i) => (
               <div key={i} style={{
-                background:'white',
                 border:`1.5px solid ${pkg.featured?'#2B7FFF':'#E5E4DE'}`,
                 borderRadius:14,padding:18,position:'relative',
                 background: pkg.featured ? 'linear-gradient(135deg,white,rgba(43,127,255,0.03))' : 'white'
