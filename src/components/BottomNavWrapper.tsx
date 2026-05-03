@@ -5,12 +5,10 @@ import BottomNav from './BottomNav'
 export default function BottomNavWrapper() {
   const pathname = usePathname()
   const hideOn = [
-    '/merchant/new-event',
-    '/admin/new-event',
-    '/admin/proofs',
-    '/admin',
     '/merchant',
+    '/admin',
+    '/scan',
   ]
-  if (hideOn.some(path => pathname.startsWith(path))) return null
+  if (hideOn.some(p => pathname.startsWith(p))) return null
   return <BottomNav />
 }
