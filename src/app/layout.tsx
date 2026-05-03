@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import BottomNav from '@/components/BottomNav'
+import BottomNavWrapper from '@/components/BottomNavWrapper'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body style={{margin:0,padding:0}}>
         {children}
-        <BottomNav />
+        <BottomNavWrapper />
       </body>
     </html>
   )
