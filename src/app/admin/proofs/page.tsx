@@ -10,8 +10,9 @@ type Proof = {
   proof_status: string
   proof_submitted_at: string
   admin_notes: string
-  profiles: { full_name: string; email: string }
-  events: { title: string; conditions: string; condition_type: string }
+  points_earned: number
+  profiles: { full_name: string; email: string; push_token: string }
+  events: { title: string; conditions: string; condition_type: string; price_points: number }
 }
 
 export default function ProofsPage() {
@@ -22,6 +23,7 @@ export default function ProofsPage() {
   const [filter, setFilter] = useState('pending')
   const [note, setNote] = useState('')
   const [selected, setSelected] = useState<string | null>(null)
+  const [processing, setProcessing] = useState(false)
 
   useEffect(() => { fetchProofs() }, [filter])
 
@@ -29,7 +31,7 @@ export default function ProofsPage() {
     setLoading(true)
     const { data } = await supabase
       .from('attendees')
-      .select('*, profiles(full_name, email), events(title, conditions, condition_type)')
+      .select('*, profiles(full_name, email, push_token), events(title, conditions, condition_type, price_points)')
       .not('proof_url', 'is', null)
       .eq('proof_status', filter)
       .order('proof_submitted_at', { ascending: false })
@@ -37,15 +39,49 @@ export default function ProofsPage() {
     setLoading(false)
   }
 
-  async function updateProof(id: string, status: 'approved' | 'rejected') {
-    await supabase.from('attendees').update({
-      proof_status: status,
-      admin_notes: note,
-      points_earned: status === 'approved' ? 50 : 0,
-    }).eq('id', id)
-    setSelected(null)
-    setNote('')
-    fetchProofs()
+  async function sendNotification(token: string, title: string, body: string) {
+    if (!token) return
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: token, title, body, sound: 'default' }),
+    })
+  }
+
+  async function updateProof(id: string, status: 'approved' | 'rejected', proof: Proof) {
+    setProcessing(true)
+    try {
+      const points = status === 'approved' ? (proof.events?.price_points || 50) : 0
+      await supabase.from('attendees').update({
+        proof_status: status,
+        admin_notes: note,
+        points_earned: points,
+        status: status === 'approved' ? 'attended' : 'registered',
+      }).eq('id', id)
+
+      // إرسال إشعار للعميل
+      if (proof.profiles?.push_token) {
+        if (status === 'approved') {
+          await sendNotification(
+            proof.profiles.push_token,
+            '✅ تم قبول إثباتك!',
+            `تهانينا! حصلت على ${points} نقطة من فعالية "${proof.events?.title}"`
+          )
+        } else {
+          await sendNotification(
+            proof.profiles.push_token,
+            '❌ تم رفض إثباتك',
+            `للأسف تم رفض إثباتك لفعالية "${proof.events?.title}". ${note || ''}`
+          )
+        }
+      }
+
+      setSelected(null)
+      setNote('')
+      fetchProofs()
+    } finally {
+      setProcessing(false)
+    }
   }
 
   const filters = [
@@ -56,7 +92,6 @@ export default function ProofsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#FAFAF7', fontFamily: 'system-ui', direction: 'rtl' }}>
-      {/* Header */}
       <div style={{ background: '#0A0A0A', padding: '16px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
         <button onClick={() => router.push('/admin')} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 14 }}>← رجوع</button>
         <h1 style={{ color: '#fff', fontSize: 20, fontWeight: 800, margin: 0 }}>مراجعة الإثباتات</h1>
@@ -65,7 +100,6 @@ export default function ProofsPage() {
         </div>
       </div>
 
-      {/* Filters */}
       <div style={{ display: 'flex', gap: 8, padding: '16px 24px', borderBottom: '1px solid #EBEBEB', background: '#fff' }}>
         {filters.map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)} style={{
@@ -82,31 +116,29 @@ export default function ProofsPage() {
         ) : proofs.length === 0 ? (
           <div style={emptyStyle}>
             <p style={{ fontSize: 40, margin: 0 }}>📭</p>
-            <p style={{ color: '#666' }}>لا توجد إثباتات {filter === 'pending' ? 'قيد المراجعة' : filter === 'approved' ? 'مقبولة' : 'مرفوضة'}</p>
+            <p style={{ color: '#666' }}>لا توجد إثباتات</p>
           </div>
         ) : (
           proofs.map(proof => (
             <div key={proof.id} style={card}>
-              {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                 <div>
-                  <p style={{ margin: 0, fontSize: 11, color: '#888' }}>{new Date(proof.proof_submitted_at).toLocaleString('ar')}</p>
+                  <p style={{ margin: 0, fontSize: 11, color: '#888' }}>{proof.proof_submitted_at ? new Date(proof.proof_submitted_at).toLocaleString('ar') : ''}</p>
                 </div>
-                <div>
+                <div style={{ textAlign: 'right' }}>
                   <p style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#0A0A0A' }}>{proof.profiles?.full_name}</p>
                   <p style={{ margin: 0, fontSize: 13, color: '#666' }}>{proof.profiles?.email}</p>
                 </div>
               </div>
 
-              {/* Event Info */}
               <div style={{ background: '#EEF4FF', borderRadius: 10, padding: 12, marginBottom: 16 }}>
                 <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#2B7FFF', textAlign: 'right' }}>🎯 {proof.events?.title}</p>
                 {proof.events?.conditions && (
                   <p style={{ margin: '6px 0 0', fontSize: 13, color: '#444', textAlign: 'right' }}>الشرط: {proof.events.conditions}</p>
                 )}
+                <p style={{ margin: '6px 0 0', fontSize: 13, color: '#F5A623', fontWeight: 700, textAlign: 'right' }}>⭐ {proof.events?.price_points} نقطة</p>
               </div>
 
-              {/* Proof Image */}
               {proof.proof_url && (
                 <div style={{ marginBottom: 16 }}>
                   <p style={{ margin: '0 0 8px', fontSize: 13, fontWeight: 600, color: '#444', textAlign: 'right' }}>الإثبات المرفوع:</p>
@@ -115,15 +147,18 @@ export default function ProofsPage() {
                 </div>
               )}
 
-              {/* Actions */}
               {filter === 'pending' && (
                 <div>
                   {selected === proof.id ? (
                     <div>
                       <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="ملاحظة للعميل (اختياري)..." style={{ width: '100%', padding: 12, borderRadius: 10, border: '1px solid #EBEBEB', fontSize: 14, marginBottom: 12, boxSizing: 'border-box', direction: 'rtl', resize: 'vertical', minHeight: 80 }} />
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <button onClick={() => updateProof(proof.id, 'approved')} style={{ flex: 1, background: '#22C55E', color: '#fff', border: 'none', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>✅ قبول وإضافة النقاط</button>
-                        <button onClick={() => updateProof(proof.id, 'rejected')} style={{ flex: 1, background: '#EF4444', color: '#fff', border: 'none', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>❌ رفض</button>
+                        <button disabled={processing} onClick={() => updateProof(proof.id, 'approved', proof)} style={{ flex: 1, background: '#22C55E', color: '#fff', border: 'none', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: processing ? 0.7 : 1 }}>
+                          {processing ? '...' : '✅ قبول وإضافة النقاط'}
+                        </button>
+                        <button disabled={processing} onClick={() => updateProof(proof.id, 'rejected', proof)} style={{ flex: 1, background: '#EF4444', color: '#fff', border: 'none', borderRadius: 10, padding: '12px', fontSize: 14, fontWeight: 700, cursor: 'pointer', opacity: processing ? 0.7 : 1 }}>
+                          {processing ? '...' : '❌ رفض'}
+                        </button>
                         <button onClick={() => setSelected(null)} style={{ padding: '12px 16px', background: '#F5F5F5', border: 'none', borderRadius: 10, cursor: 'pointer', color: '#666' }}>إلغاء</button>
                       </div>
                     </div>
@@ -135,11 +170,10 @@ export default function ProofsPage() {
                 </div>
               )}
 
-              {/* Status Badge */}
               {filter !== 'pending' && (
                 <div style={{ textAlign: 'center', padding: '10px', borderRadius: 10, background: filter === 'approved' ? '#DCFCE7' : '#FEE2E2' }}>
                   <span style={{ color: filter === 'approved' ? '#22C55E' : '#EF4444', fontWeight: 700, fontSize: 14 }}>
-                    {filter === 'approved' ? '✅ تم القبول وإضافة النقاط' : '❌ تم الرفض'}
+                    {filter === 'approved' ? `✅ تم القبول — +${proof.points_earned} نقطة` : '❌ تم الرفض'}
                   </span>
                   {proof.admin_notes && <p style={{ margin: '6px 0 0', fontSize: 13, color: '#666' }}>{proof.admin_notes}</p>}
                 </div>
