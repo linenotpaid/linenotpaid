@@ -8,7 +8,9 @@ export default function BottomNavWrapper() {
     '/merchant/new-event',
     '/admin/new-event',
     '/admin/proofs',
+    '/admin',
+    '/merchant',
   ]
-  if (hideOn.includes(pathname)) return null
+  if (hideOn.some(path => pathname.startsWith(path))) return null
   return <BottomNav />
 }
