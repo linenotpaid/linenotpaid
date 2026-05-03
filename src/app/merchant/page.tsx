@@ -1226,7 +1226,8 @@ export default function MerchantDashboard() {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
             تصدير
           </button>
-          <button className="btn btn-primary" onClick={() => router.push(`/merchant/new-event`)}>
+          <button className="btn btn-secondary" onClick={() => router.push(`/merchant/scanner`)} style={{marginLeft:"8px"}}>📡 ماسح QR</button>
+                <button className="btn btn-primary" onClick={() => router.push(`/merchant/new-event`)}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             فعالية جديدة
           </button>
