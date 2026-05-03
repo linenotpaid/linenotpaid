@@ -3,7 +3,10 @@ import { usePathname } from 'next/navigation'
 
 export default function BottomNav() {
   const path = usePathname()
-  
+
+  const hideOn = ['/admin', '/merchant']
+  if (hideOn.some(p => path.startsWith(p))) return null
+
   const tabs = [
     { href:'/', icon:'🏠', label:'اكتشف' },
     { href:'/wallet', icon:'💰', label:'محفظتي' },
@@ -30,15 +33,11 @@ export default function BottomNav() {
             background: path===tab.href ? '#0A0A0A' : 'transparent',
             display:'flex',alignItems:'center',justifyContent:'center',
             fontSize:18
-          }}>
-            {tab.icon}
-          </div>
+          }}>{tab.icon}</div>
           <span style={{
-            fontSize:10,fontWeight: path===tab.href ? 600 : 500,
-            color: path===tab.href ? '#0A0A0A' : '#B0B0AA'
-          }}>
-            {tab.label}
-          </span>
+            fontSize:10,fontWeight: path===tab.href ? 700 : 500,
+            color: path===tab.href ? '#0A0A0A' : '#9B9B96'
+          }}>{tab.label}</span>
         </a>
       ))}
     </div>
