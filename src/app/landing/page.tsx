@@ -155,7 +155,7 @@ export default function LandingPage() {
               <a href="#" className="btn btn-secondary">تنزيل التطبيق</a>
             </div>
             <div className="hero-stats">
-              {[{num:"2.4K",label:"منظّم نشط"},{num:"180K",label:"حضور موثّق"},{num:"94%",label:"نسبة الإكمال"},{num:"1.2M",label:"نقطة موزّعة"}].map((s,i)=>(
+              {[{num:"47",label:"منظّم نشط"},{num:"1.2K",label:"حضور موثّق"},{num:"91%",label:"نسبة الإكمال"},{num:"8.4K",label:"ريال وُزِّع"}].map((s,i)=>(
                 <div key={i} className="stat-cell"><div className="stat-num">{s.num}<span className="plus">+</span></div><div className="stat-label">{s.label}</div></div>
               ))}
             </div>
