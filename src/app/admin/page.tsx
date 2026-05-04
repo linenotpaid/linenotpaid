@@ -1131,6 +1131,11 @@ export default function AdminDashboard() {
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         <span>الفعاليات</span>
       </button>
+      <button className="nav-item" data-page="withdrawals" onClick={() => window.location.href="/admin/withdrawals"}>
+        <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span>طلبات السحب</span>
+        <span className="badge alert">0</span>
+      </button>
       <button className="nav-item" data-page="approvals">
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>قائمة المراجعة</span>
