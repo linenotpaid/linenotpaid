@@ -1136,7 +1136,7 @@ export default function AdminDashboard() {
       <button className="nav-item" data-page="subscriptions">
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
         <span>الاشتراكات</span>
-      <button className="nav-item" onClick={() => window.location.href="/admin/withdrawals"}>
+      <a href="/admin/withdrawals" className="nav-item" style={{textDecoration:"none",color:"inherit"}}>
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         <span>طلبات السحب</span>
       </button>
