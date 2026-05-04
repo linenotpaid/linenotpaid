@@ -1131,23 +1131,15 @@ export default function AdminDashboard() {
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         <span>الفعاليات</span>
       </button>
-      <button className="nav-item" data-page="withdrawals" onClick={() => window.location.href="/admin/withdrawals"}>
-        <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-        <span>طلبات السحب</span>
-        <span className="badge alert">0</span>
-      </button>
-      <button className="nav-item" data-page="approvals">
-        <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span>قائمة المراجعة</span>
-        <span className="badge alert">12</span>
-      </button>
-    </nav>
-
     <nav className="nav-section">
       <div className="nav-section-title">المالية</div>
       <button className="nav-item" data-page="subscriptions">
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
         <span>الاشتراكات</span>
+      <button className="nav-item" data-page="withdrawals" onClick={() => window.location.href="/admin/withdrawals"}>
+        <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span>طلبات السحب</span>
+      </button>
       </button>
       <button className="nav-item" data-page="commissions">
         <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>
